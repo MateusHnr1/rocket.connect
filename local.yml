@@ -119,7 +119,7 @@ services:
     command: /start-flower
 
   rocketchat:
-    image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-5.4.8-alpine}
+    image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-5.4.10-alpine}
     restart: on-failure
     environment:
       MONGO_URL: "${MONGO_URL:-\
@@ -191,7 +191,15 @@ services:
   wppconnect:
     image: wppconnect/server-cli:main
     # for command options: https://github.com/wppconnect-team/server-cli/blob/main/src/program.js
-    command: wppserver --startAllSession
+    command: wppserver 
+            --startAllSession
+            --log-level DEBUG
+            --secretKey THISISMYSECURETOKEN
+            --port 21465
+            --startAllSession
+            --webhook-allUnreadOnStart
+            --no-webhook-onPresenceChanged
+            --no-webhook-onParticipantsChanged
     volumes:
       - local_wppconnect_data:/usr/src/server-cli/userDataDir
       - local_wppconnect_tokens:/usr/src/server-cli/tokens

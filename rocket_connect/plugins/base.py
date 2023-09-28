@@ -42,7 +42,6 @@ class Connector:
         self.rocket = None
         self.room = None
         self.logger = logging.getLogger("teste")
-
     # if true, lists the connector on active chat forms and apis
     support_active_chat = False
 
@@ -53,10 +52,17 @@ class Connector:
         return True
 
     def logger_info(self, message):
+        # Constrói a mensagem de saída inicial com base no conector e no tipo, ambos formatados de maneira específica
         output = f"{self.connector} > {self.type.upper()} > {message}"
+        
+        # Verifica se existe um atributo de mensagem definido
         if self.message:
+            # Verifica se é possível obter um ID para a mensagem
             if self.get_message_id():
+                # Se houver um ID de mensagem, prepende-o à saída
                 output = f"MESSAGE ID {self.get_message_id()} > " + output
+        
+        # Registra a saída com o nível de informação (INFO) no logger
         self.logger.info(output)
 
     def logger_error(self, message):
@@ -573,6 +579,8 @@ class Connector:
         # so now it can go to a new room
         self.incoming()
 
+# Não sei se é mensagem do rocket.chat para o wpp
+# Os unicos cantos que utiliza essa função é o waautomate e o proprio base
     def room_send_text(self, room_id, text, message_id=None):
         if settings.DEBUG:
             print(f"SENDING MESSAGE TO ROOM ID {room_id}: {text}")
