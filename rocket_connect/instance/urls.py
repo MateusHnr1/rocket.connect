@@ -41,7 +41,7 @@ urlpatterns = [
         name="new_server",
     ),
      re_path(
-        r"^server/(?P<server_id>\w+)/(?P<token_rocketChat>\w+)/(?P<x_user_id>\w+)/(?P<connector_id>\w+)?$",
+        r"^server/(?P<server_id>[^/]+)/(?P<token_rocketChat>[^/]+)/(?P<x_user_id>[^/]+)/(?P<connector_id>[^/]+)?$",
         view=rota_mateus,
         name="mateus",
     ),

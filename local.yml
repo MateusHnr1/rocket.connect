@@ -191,15 +191,7 @@ services:
   wppconnect:
     image: wppconnect/server-cli:main
     # for command options: https://github.com/wppconnect-team/server-cli/blob/main/src/program.js
-    command: wppserver 
-            --startAllSession
-            --log-level DEBUG
-            --secretKey THISISMYSECURETOKEN
-            --port 21465
-            --startAllSession
-            --webhook-allUnreadOnStart
-            --no-webhook-onPresenceChanged
-            --no-webhook-onParticipantsChanged
+    command: wppserver --startAllSession
     volumes:
       - local_wppconnect_data:/usr/src/server-cli/userDataDir
       - local_wppconnect_tokens:/usr/src/server-cli/tokens

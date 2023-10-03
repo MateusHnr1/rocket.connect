@@ -58,19 +58,21 @@ def must_be_yours(func):
 
 def must_be_yours1(func):
     def check_and_call(request, *args, **kwargs):
-        server_id = kwargs["server_id"]
-        token_rocketChat = kwargs["token_rocketChat"]
-        x_user_id = kwargs["x_user_id"]
-        connector_id = kwargs["connector_id"]
-        servers_owned = request.user.servers.all().values_list(
-            "external_token", flat=True
-        )
-        if not (server_id in servers_owned):
-            return redirect(reverse("home"))
+    #     server_id = kwargs["server_id"]
+    #     token_rocketChat = kwargs["token_rocketChat"]
+    #     x_user_id = kwargs["x_user_id"]
+    #     connector_id = kwargs["connector_id"]
+    #     servers_owned = request.user.servers.all().values_list(
+    #         "external_token", flat=True
+    #     )
+    #     if not (server_id in servers_owned):
+    #         return redirect(reverse("home"))
+    #     return func(request, *args, **kwargs)
+
+    # return check_and_call
         return func(request, *args, **kwargs)
 
     return check_and_call
-
 
 @csrf_exempt
 def server_endpoint(request, server_id):
@@ -180,18 +182,11 @@ def rota_mateus(request, server_id, connector_id, token_rocketChat, x_user_id):
         if 'bot' not in usuario["roles"] :
             usuarios_no_bot.append(usuario)
 
-    # connector = get_object_or_404(
-    #     Connector, external_token=connector_id, enabled=True, server__enabled=True
-    # )so vai lá que pra traduzir
-        # aux = server.get_rocket_client()
-    # from pprint import pprint
-    # pprint(aux)
-    # url_base = "http://192.168.1.21:3000"
     url_user ="http://192.168.1.21:3000/api/v1/users.list"
     url_visitor = "http://192.168.1.21:3000/api/v1/livechat/visitors.search?term="
     headers = {
-        "X-Auth-Token": "cGr7NwukSyrxJmZNAThjg2US65ZfdkQxo9gIbqKq36F",
-        "X-User-Id": "D4q8vBmd8ssb9kJpg",
+        "X-Auth-Token": "RzZpc9_jMmfjf0sFOg-5V2l8C4bCcIxV2ks5txPeMYY",
+        "X-User-Id": "JoEtAv2bypTKYq2GW",
     }
     try:
         usuarios = requests.get(url_user,headers=headers)

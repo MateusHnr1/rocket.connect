@@ -425,7 +425,6 @@ class Connector(ConnectorBase):
                         # define message type
                         self.type = "active_chat"
                         # register message
-                        print("EU TO PASSANDO POR AQUI E QUERO NEM SABER","\n","\n\n\n\n\n\n\n")
                         message, created = self.register_message()
                         # do not send a sent message
                         if message.delivered:
@@ -464,7 +463,6 @@ class Connector(ConnectorBase):
                             force_transfer=department_id,
                         )
                         
-                        # print("estou indo para uma sala","\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
                         if room:
                             self.logger_info(f"ACTIVE CHAT GOT A ROOM {room}")
                             # send the message to the room, in order to be delivered to the
@@ -557,8 +555,6 @@ class Connector(ConnectorBase):
             self.config.get("endpoint"),
             self.config.get("instance_name"),
         )
-        
-        # print(endpoint,"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
         token = self.config.get("token", {}).get("token")
 
@@ -1182,6 +1178,7 @@ class Connector(ConnectorBase):
     def handle_inbound(self, request):
         if request.GET.get("phone"):
             check = self.check_number_status(request.GET.get("phone"))
+            print(check)
             if check["response"]["numberExists"]:
                 serialized_id = check.get("response").get("id").get("_serialized")
                 # get proper number
