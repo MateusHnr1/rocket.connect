@@ -275,7 +275,6 @@ class Connector(ConnectorBase):
 
 
     def active_chat(self):
-        #Abri um chat novo
         """
         this method will be triggered when an active_chat needs to be places
         it has to interpret the active chat text, and do the necessary check and
@@ -320,6 +319,9 @@ class Connector(ConnectorBase):
         # construct message
         texto = self.message.get("text")
         message_raw = " ".join(texto.split(" ")[2:])
+        # print("\n\n")
+        # print(self.message)
+        # print("\n\n")
         if not message_raw:
             self.rocket.chat_update(
                 room_id=room_id,
@@ -331,7 +333,6 @@ class Connector(ConnectorBase):
             )
             # return nothing
             return {"success": False, "message": "NO MESSAGE TO SEND"}
-
         # number checking
         if check_number.get("response", {}).get("canReceiveMessage", False):
             # can receive messages
@@ -462,7 +463,9 @@ class Connector(ConnectorBase):
                             check_if_open=True,
                             force_transfer=department_id,
                         )
-                        
+                        # print("\n\n")
+                        # print(message)
+                        # print("\n\n")
                         if room:
                             self.logger_info(f"ACTIVE CHAT GOT A ROOM {room}")
                             # send the message to the room, in order to be delivered to the
@@ -514,7 +517,6 @@ class Connector(ConnectorBase):
                 self.message["chatId"] = number
                 message = {"msg": message_raw}
                 sent = self.outgo_text_message(message)
-                # print("ESTOU ENVIANDO ESSA MENSAGEM ::::::::",message,"\n\n\n\n\n\n\n\n\n\n\n")
                 if sent and sent.ok:
                     # return {
                     #     "text": ":white_check_mark: SENT {0} \n{1}".format(
@@ -587,7 +589,6 @@ class Connector(ConnectorBase):
         except requests.ConnectionError:
             return {"success": False, "message": "ConnectionError"}
         # start session
-        # print("NEMMMM FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU","\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         return self.start_session()
 
     def incoming(self):
@@ -595,10 +596,15 @@ class Connector(ConnectorBase):
         this method will process the incoming messages
         and ajust what necessary, to output to rocketchat
         """
+        # print("\n\n")
+        # print(self.__dict__)
+        # print("\n")
         message = json.dumps(self.message)
-        self.logger_info(f"INCOMING MESSAGE: {message}")
+        # requests.post("https://requestview.marcosbrendonde.repl.co/callback/TESTEMATEUS",json=message)
+        # print("\n\n")
+        # self.logger_info(f"INCOMING MESSAGE: {message}")
+        # print("\nLogger mensage\n")
         # qr code
-
         if self.message.get("action"):
             # check if session managemnt is active
             if self.config.get("session_management_token"):
@@ -650,8 +656,15 @@ class Connector(ConnectorBase):
             message, created = self.register_message()
             room = self.get_room()
             self.handle_incoming_call()
-
+            # print("\n\n")
+            # print(room)
+            # print("\n\n")
         # message
+        # print("\n\n")
+        # img_url = self.message.get("profilePicThumbObj", {}).get("img")
+        # print(img_url)
+        # print(self.message.get("event"))
+        # print("\n\n")
         if self.message.get("event") in ["onmessage", "unreadmessages"]:
             department = None
             if self.message.get("event") == "unreadmessages":
@@ -680,6 +693,7 @@ class Connector(ConnectorBase):
                         # if it's not a button reply
                         # there is not room
                         room = self.get_room(department, create=False)
+                        # requests.post("https://requestview.marcosbrendonde.repl.co/callback/TESTEMATEUS",json=room)
                         if not room:
                             # get departments and buttons
                             buttons = []
@@ -1050,7 +1064,6 @@ class Connector(ConnectorBase):
             self.connector.config["instance_name"]
         )
         try:
-            # mesangem é um json
             payload = json.loads(content)
             # if payload is integer or other json loadable content
             if type(payload) != dict:
@@ -1176,18 +1189,26 @@ class Connector(ConnectorBase):
             self.message_object.save()
 
     def handle_inbound(self, request):
+        # print("inicio request")
+        # print(request)
+        # print(request.GET.get("phone"))
+        # print("final request")
         if request.GET.get("phone"):
             check = self.check_number_status(request.GET.get("phone"))
             print(check)
+            print("check\n")
             if check["response"]["numberExists"]:
                 serialized_id = check.get("response").get("id").get("_serialized")
                 # get proper number
                 proper_number = check["response"]["id"]["user"]
-
+                print(request)
                 department = request.GET.get("department", None)
+                
                 if not department:
                     department = self.config.get("default_inbound_department", None)
-
+                # print(department)
+                # print("departamento")
+                # print("\n")
                 self.message = {
                     "from": serialized_id,
                     "chatId": serialized_id,
@@ -1198,6 +1219,10 @@ class Connector(ConnectorBase):
                 self.message["visitor"] = {"token": "whatsapp:" + serialized_id}
                 self.get_rocket_client()
                 room = self.get_room(department, allow_welcome_message=False)
+                # print("\n")
+                # print(room)
+                # print("\n")
+                # requests.post("https://requestview.marcosbrendonde.repl.co/callback/TESTEMATEUS",json=room)
                 if room:
                     # outcome message
                     if request.GET.get("text"):
@@ -1206,7 +1231,11 @@ class Connector(ConnectorBase):
                             text=request.GET.get("text"), room_id=room.room_id
                         )
                     external_url = room.get_room_url()
-                    return {"success": True, "redirect": external_url}
+
+                    print("\n")
+                    print(external_url)
+                    print("\n")
+                    return {"success": True, "redirect": external_url , "message": self.message}
             else:
                 return {
                     "success": False,
@@ -1235,6 +1264,9 @@ class Connector(ConnectorBase):
                 )
                 last_messages_req = session.get(url).json()
                 last_messages = last_messages_req["response"]
+                # print("\n\n")
+                # print(last_messages)
+                # print("\nWPPconnect Handle_inbound\n")
                 if not last_messages_req["response"]:
                     output = {
                         "success": False,
@@ -1318,6 +1350,9 @@ class Connector(ConnectorBase):
                     text=f"{mark} {body}",
                 )
                 message.ack = True
+                # print("\n\n")
+                # print(message)
+                # print("\n\n")
                 message.save()
 
     def get_message(self, message_id):
@@ -1325,7 +1360,7 @@ class Connector(ConnectorBase):
         endpoint = "{}/api/{}/message-by-id/{}".format(
             self.config.get("endpoint"), self.config.get("instance_name"), message_id
         )
-        # print("quero enviar uma mensagem com o Get_Message Linha 1319",endpoint,"\n\n\n\n\n\n\n\n\n")
+        
         message = session.get(endpoint).json()
         return message
 

@@ -5,11 +5,24 @@ from email.utils import parseaddr
 from pathlib import Path
 
 import environ
+import os, sys
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # rocket_connect/
 APPS_DIR = ROOT_DIR / "rocket_connect"
 env = environ.Env()
+
+if os.getenv("READTHEDOCS", default=False) == "True":
+    sys.path.append(os.path.abspath("../"))
+    sys.path.append(os.path.abspath("../rocket_connect"))
+    os.environ["DJANGO_READ_DOT_ENV_FILE"] = "True"
+    os.environ["USE_DOCKER"] = "no"
+else:
+    sys.path.insert(0, os.path.abspath("/app"))
+
+os.environ["DATABASE_URL"] = "sqlite:///readthedocs.db"
+os.environ["CELERY_BROKER_URL"] = os.getenv("REDIS_URL", "redis://redis:6379")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
@@ -220,10 +233,23 @@ SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = env.bool("DJANGO_CSRF_COOKIE_HTTPONLY", default=True)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
+SECURE_BROWSER_XSS_FILTER = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
+X_FRAME_OPTIONS = ""
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    "access-control-allow-origin",
+    "accept",
+    "origin",
+    "content-type",
+    "x-requested-with",
+]
 
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",
+]
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend

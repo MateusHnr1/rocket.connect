@@ -414,8 +414,14 @@ class Connector:
                 connector=self.connector, token=connector_token, open=True
             )
             self.logger_info(f"get_room, got {room}")
+            print("\n")
+            print(check_if_open)
+            print("\n")
             if check_if_open:
                 self.logger_info("checking if room is open")
+                # print(self)
+                # print("Deentro do get_room")
+                # print("\n")
                 open_rooms = self.rocket.livechat_rooms(open="true").json()
                 open_rooms_id = [r["_id"] for r in open_rooms["rooms"]]
                 if room.room_id not in open_rooms_id:
